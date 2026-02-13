@@ -6,6 +6,7 @@
 // Exception Vector Table
 // Must be aligned to 32 bytes (0x20)
 .align 5
+_start: //Esto ya que el linker lo pide
 vector_table:
     b reset_handler      @ 0x00: Reset
     b undefined_handler  @ 0x04: Undefined Instruction
@@ -51,7 +52,17 @@ data_handler:
 // 4. Return from interrupt using: subs pc, lr, #4
 irq_handler:
     // TODO: Implement IRQ handler
-    b hang
+    //1. Guardamos el estado actual
+    push {r0-r12, lr}
+
+    //2. Lllamamos a la funcion C timer_irq_handler
+    bl timer_irq_handler
+
+    //3 Restaurar los registros
+    pop {r0-r12, lr}
+
+    //4 Dejarlo donde estabamos
+    subs pc, lr, #4
 
 fiq_handler:
     b hang
@@ -75,6 +86,15 @@ GET32:
 .globl enable_irq
 enable_irq:
     // TODO: Implement enable_irq
+    //1 Leemos el valor actual de CPSR
+    mrs r0, cpsr
+
+    //2. Limpiamos el valor del 7 bit para habilitar las interrupciones
+    bic r0, r0, #0x80
+
+    //3. Regresar el valor de CPSR
+    msr cpsr_c, r0
+
     bx lr
 
 // Stack space allocation
