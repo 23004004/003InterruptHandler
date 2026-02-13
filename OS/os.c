@@ -102,7 +102,36 @@ void uart_putnum(unsigned int num) {
 // 9. Start timer in auto-reload mode (TCLR = 0x3)
 void timer_init(void) {
     // TODO: Implement timer initialization
-    os_write("Timer initialization not yet implemented\n");
+
+    //Solo seguir las intrucciones que nos dan
+    //1. Habilitar el timer, esto se hace pasandole a la propiedad indicada 0x2
+    PUT32(CM_PER_TIMER2_CLKCTRL, 0x2); 
+
+    //2.Desenmascarar el  IRQ 68 para el controlador de interrupciones, agarrar el maximo valor y restarle par que quede en 2 seg
+    PUT32(INTC_MIR_CLEAR2, (1 << (68 - 64)));
+
+    //3. Configurar la prioridad de las interrupciones
+    PUT32(INTC_ILR68, 0x0);
+
+    //4.Parar el timer
+    PUT32(TCLR, 0x0);
+
+    //5. Limpiar las interrupciones que estan pendientes
+    PUT32(TISR, 0x7);
+
+    //6.Cargar el valor a 2 segundos
+    PUT32(TLDR, 0xFE91CA00);
+
+    //7. Ek contador mismo valor que el del timer
+    PUT32(TCRR, 0xFE91CA00);
+
+    //8. Habilitar la interrupcion del timer
+    PUT32(TIER, 0x2);
+
+    //9.Habilitar el timer para que se repita, sino solo una vez va a aparecer
+    PUT32(TCLR, 0x3);
+
+    os_write("Timer initialization\n");
 }
 
 // TODO: Implement timer interrupt handler
@@ -112,7 +141,15 @@ void timer_init(void) {
 // 3. Print "Tick\n" via UART
 void timer_irq_handler(void) {
     // TODO: Implement timer interrupt handler
-    os_write("Timer interrupt handler not yet implemented\n");
+
+    //1. Limpiar la interrupcion del timer
+    PUT32(TISR, 0x2);
+
+    //2 Avisar la interrupcion al controlador
+    PUT32(INTC_CONTROL, 0x1);
+
+    //3. Imprimir el tick
+    os_write("Tick\n");
 }
 
 // ============================================================================
@@ -129,10 +166,13 @@ unsigned int rand(void) {
 
 int main(void) {
     // TODO: Print initialization message
+    os_write("initialization timer\n");
     // TODO: Initialize the timer using timer_init()
+    timer_init();
     // TODO: Enable interrupts using enable_irq()
+    enable_irq();
     // TODO: Print a message indicating interrupts are enabled
-    
+    os_write("interrupts are enabled\n");
     // Main loop: continuously print random numbers
     while (1) {
         unsigned int random_num = rand() % 1000;
