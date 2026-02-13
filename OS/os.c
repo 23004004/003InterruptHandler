@@ -96,8 +96,8 @@ void uart_putnum(unsigned int num) {
 // 3. Configure interrupt priority (INTC_ILR68 = 0x0)
 // 4. Stop the timer (TCLR = 0)
 // 5. Clear any pending interrupts (TISR = 0x7)
-// 6. Set the load value for 2 seconds (TLDR = 0xFE91CA00)
-// 7. Set the counter to the same value (TCRR = 0xFE91CA00)
+// 6. Set the load value for 2 seconds (TLDR = 0xFE91CA00) - el que use fue 0xFD115F00
+// 7. Set the counter to the same value (TCRR = 0xFE91CA00) - el que use fue 0xFD115F00
 // 8. Enable overflow interrupt (TIER = 0x2)
 // 9. Start timer in auto-reload mode (TCLR = 0x3)
 void timer_init(void) {
@@ -120,10 +120,10 @@ void timer_init(void) {
     PUT32(TISR, 0x7);
 
     //6.Cargar el valor a 2 segundos
-    PUT32(TLDR, 0xFE91CA00);
+    PUT32(TLDR, 0xFD115F00);
 
     //7. Ek contador mismo valor que el del timer
-    PUT32(TCRR, 0xFE91CA00);
+    PUT32(TCRR, 0xFD115F00);
 
     //8. Habilitar la interrupcion del timer
     PUT32(TIER, 0x2);
