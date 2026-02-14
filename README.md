@@ -264,3 +264,25 @@ The interruption is handled as follows.
 5. The `timer_irq_handler()` function clears the interrupt notifies the controller that it has been handled, and prints “Tick.”
 
 6. Finally, the records are restored and the program continues from the point where it was interrupted.
+
+## Additional Notes
+
+## References
+
+1. Texas Instruments.  
+   *AM335x Sitara™ Processors Technical Reference Manual (TRM)*.  
+   Document Number: SPRUH73.  
+   Available at: https://www.ti.com/lit/ug/spruh73q/spruh73q.pdf  
+
+2. ARM Ltd.  
+   *ARM Architecture Reference Manual – ARMv7-A and ARMv7-R*.  
+
+3. ARM Developer Documentation.  
+   *Handling Processor Exceptions – ARMv7-A/R Profiles*.  
+   Available at:  
+   https://developer.arm.com/documentation/dui0203/j/handling-processor-exceptions/armv6-and-earlier--armv7-a-and-armv7-r-profiles/interrupt-handlers  
+
+4. ARM Developer Documentation.  
+   *IRQ Exception Description*.  
+   Available at:  
+   https://developer.arm.com/documentation/ddi0406/c/System-Level-Architecture/The-System-Level-Programmers--Model/Exception-descriptions/IRQ-exception  
