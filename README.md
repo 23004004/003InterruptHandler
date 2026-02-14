@@ -72,6 +72,16 @@ Contains:
 ## 3. Architecture explanation
 ### How does the system manage IRQs from the hardware to the controller?
 
-Funciona de la siguiente manera...
+The interruption is handled as follows.
 
----
+1. The timer counts until overflow. When this occurs, the hardware generates the IRQ 68 interrupt.
+
+2. The signal reaches the interrupt controller. If the interrupt is unmasked, the INTC sends it to the CPU.
+
+3. If IRQs are enabled on the CPU, it switches to IRQ mode and jumps to address 0x18 in the vector table.
+
+4. In that position is the jump to `irq_handler`, where the registers are saved and `timer_irq_handle(` is called.
+
+5. The `timer_irq_handler()` function clears the interrupt notifies the controller that it has been handled, and prints “Tick.”
+
+6. Finally, the records are restored and the program continues from the point where it was interrupted.
